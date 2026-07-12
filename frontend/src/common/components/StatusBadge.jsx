@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React from "react";
 
 // Single source of truth for status colors across the app.
@@ -26,4 +27,15 @@ const STYLES = {
 export default function StatusBadge({ status }) {
   const cls = STYLES[status] || "bg-gray-100 text-gray-700 border-gray-200";
   return <span className={`badge border ${cls}`}>{status}</span>;
+=======
+import { statusColorMap } from '../../config/theme';
+
+export default function StatusBadge({ status }) {
+  const cls = statusColorMap[status] || 'draft';
+  return (
+    <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium status-${cls}`}>
+      {status}
+    </span>
+  );
+>>>>>>> e21946685e62ae18c3f3933d86dd20bdbac55cd8
 }

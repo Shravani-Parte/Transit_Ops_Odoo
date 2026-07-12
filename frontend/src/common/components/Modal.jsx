@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useEffect } from "react";
 import { X } from "lucide-react";
 
@@ -21,5 +22,36 @@ export default function Modal({ open, onClose, title, children, footer, size = "
         {footer && <div className="px-5 py-3 border-t border-border flex justify-end gap-2 bg-bg">{footer}</div>}
       </div>
     </div>
+=======
+
+import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
+
+export default function Modal({ isOpen, onClose, title, children }) {
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white dark:bg-slate-800 rounded-lg p-6 max-w-md w-full mx-4">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold">{title}</h2>
+          <button onClick={onClose} className="text-slate-500 hover:text-slate-700">
+            ✕
+          </button>
+        </div>
+        {children}
+      </div>
+    </div>,
+    document.body,
+>>>>>>> e21946685e62ae18c3f3933d86dd20bdbac55cd8
   );
 }

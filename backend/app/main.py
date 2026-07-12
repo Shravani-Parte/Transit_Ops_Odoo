@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """TransitOps FastAPI app entrypoint."""
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,6 +12,19 @@ from app.db.init_db import seed_reference_data
 
 app = FastAPI(title="TransitOps API", version="1.0.0")
 
+=======
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+
+from app.api.v1.router import api_router
+from app.core.config import settings
+from app.core.exceptions import TransitOpsException
+from app.db.init_db import create_tables, init_db
+from app.db.session import SessionLocal
+
+app = FastAPI(title=settings.APP_NAME, version="1.0.0")
+>>>>>>> e21946685e62ae18c3f3933d86dd20bdbac55cd8
 
 app.add_middleware(
     CORSMiddleware,
@@ -19,14 +33,36 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+<<<<<<< HEAD
 app.add_middleware(RequestLoggerMiddleware)
 register_error_handlers(app)
 
 app.include_router(api_router, prefix="/api/v1")
+=======
+
+
+@app.exception_handler(TransitOpsException)
+async def transitops_exception_handler(request: Request, exc: TransitOpsException):
+    return JSONResponse(status_code=exc.status_code, content={"detail": exc.message})
+
+
+@app.on_event("startup")
+def on_startup():
+    create_tables()
+    db = SessionLocal()
+    try:
+        init_db(db)
+    finally:
+        db.close()
+
+
+app.include_router(api_router, prefix=settings.API_V1_PREFIX)
+>>>>>>> e21946685e62ae18c3f3933d86dd20bdbac55cd8
 
 
 @app.get("/health")
 def health():
+<<<<<<< HEAD
     return {"status": "ok"}
 
 
@@ -63,3 +99,6 @@ async def startup() -> None:
         await seed_reference_data(db)
     # Let's skip alembic for now to get up and running quickly
 
+=======
+    return {"status": "ok", "app": settings.APP_NAME}
+>>>>>>> e21946685e62ae18c3f3933d86dd20bdbac55cd8

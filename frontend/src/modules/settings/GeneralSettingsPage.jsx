@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState } from "react";
 import Input from "@/common/components/Input";
 import Select from "@/common/components/Select";
@@ -38,6 +39,15 @@ export default function GeneralSettingsPage() {
         <div className="font-semibold">Demo Data</div>
         <div className="text-sm text-text-muted">Reset the local mock database back to its seed state.</div>
         <div><Button variant="danger" onClick={() => { resetMockData(); push("Mock data reset — reload the page", "info"); }}>Reset Demo Data</Button></div>
+=======
+
+export default function GeneralSettingsPage() {
+  return (
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold text-slate-900 dark:text-white">General Settings</h1>
+      <div className="card p-6">
+        <p>General settings coming soon!</p>
+>>>>>>> e21946685e62ae18c3f3933d86dd20bdbac55cd8
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "@/common/components/Button";
@@ -78,6 +79,15 @@ export default function TripCreatePage() {
         <Button variant="secondary" onClick={() => step === 0 ? nav("/trips") : setStep(s => s - 1)}>{step === 0 ? "Cancel" : "Back"}</Button>
         {step < STEPS.length - 1 && <Button disabled={!validNext()} onClick={() => setStep(s => s + 1)}>Next</Button>}
         {step === STEPS.length - 1 && <Button disabled={loading} onClick={finish}>{loading ? "Creating..." : "Create Draft"}</Button>}
+=======
+
+export default function TripCreatePage() {
+  return (
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Create Trip</h1>
+      <div className="card p-6">
+        <p>Create trip form coming soon!</p>
+>>>>>>> e21946685e62ae18c3f3933d86dd20bdbac55cd8
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """auth.py — HTTP handlers. Delegates to service layer."""
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -77,3 +78,25 @@ async def me(current_user: dict = Depends(get_current_user), db: AsyncSession = 
     role = role_result.scalar_one_or_none()
     return {"id": user.id, "name": user.name, "email": user.email, "role": role.name if role else "FleetManager"}
 
+=======
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+
+from app.api.v1.deps import get_current_user, require_perm
+from app.db.session import get_db
+from app.schemas.auth import LoginRequest, TokenResponse, UserOut
+from app.services import auth_service
+
+router = APIRouter(prefix="/auth", tags=["auth"])
+
+
+@router.post("/login")
+def login(data: LoginRequest, db: Session = Depends(get_db)):
+    result = auth_service.login(db, data.email, data.password)
+    return {"access_token": result["access_token"], "token_type": "bearer", "user": result["user"]}
+
+
+@router.get("/me", response_model=UserOut)
+def me(user=Depends(get_current_user), db: Session = Depends(get_db)):
+    return auth_service.build_user_out(db, user)
+>>>>>>> e21946685e62ae18c3f3933d86dd20bdbac55cd8

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """Domain-level exceptions."""
 
 
@@ -19,3 +20,25 @@ class DispatchViolation(DomainError):
 
 class PermissionDenied(DomainError):
     """RBAC layer rejection."""
+=======
+class TransitOpsException(Exception):
+    def __init__(self, message: str, status_code: int = 400):
+        self.message = message
+        self.status_code = status_code
+        super().__init__(message)
+
+
+class NotFoundError(TransitOpsException):
+    def __init__(self, message: str = "Resource not found"):
+        super().__init__(message, 404)
+
+
+class ForbiddenError(TransitOpsException):
+    def __init__(self, message: str = "Permission denied"):
+        super().__init__(message, 403)
+
+
+class ValidationError(TransitOpsException):
+    def __init__(self, message: str):
+        super().__init__(message, 422)
+>>>>>>> e21946685e62ae18c3f3933d86dd20bdbac55cd8

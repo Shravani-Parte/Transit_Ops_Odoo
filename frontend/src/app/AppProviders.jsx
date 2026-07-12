@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { createContext, useCallback, useState } from "react";
 import { AuthProvider } from "@/auth/AuthContext";
 import Toast from "@/common/components/Toast";
@@ -19,5 +20,15 @@ export default function AppProviders({ children }) {
         <Toast toasts={toasts} />
       </ToastContext.Provider>
     </AuthProvider>
+=======
+import { AuthProvider } from '../auth/AuthContext';
+import { UIProvider } from '../store/uiStore';
+
+export default function AppProviders({ children }) {
+  return (
+    <UIProvider>
+      <AuthProvider>{children}</AuthProvider>
+    </UIProvider>
+>>>>>>> e21946685e62ae18c3f3933d86dd20bdbac55cd8
   );
 }

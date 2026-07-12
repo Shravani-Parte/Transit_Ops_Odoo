@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React from "react";
 import useAuth from "@/auth/useAuth";
 import { ROLE_LABELS } from "@/config/constants";
@@ -14,6 +15,20 @@ export default function ProfilePage() {
         <Row l="Email" v={user.email} />
         <Row l="Role" v={ROLE_LABELS[user.role] || user.role} />
         <Row l="Status" v={user.status} />
+=======
+
+import { useAuth } from '../../auth/useAuth';
+
+export default function ProfilePage() {
+  const { user } = useAuth();
+  return (
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Profile</h1>
+      <div className="card p-6">
+        <p>Name: {user?.full_name}</p>
+        <p>Email: {user?.email}</p>
+        <p>Role: {user?.role_name}</p>
+>>>>>>> e21946685e62ae18c3f3933d86dd20bdbac55cd8
       </div>
     </div>
   );

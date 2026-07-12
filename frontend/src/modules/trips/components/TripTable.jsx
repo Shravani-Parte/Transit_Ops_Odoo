@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React from "react";
 import Table from "@/common/components/Table";
 import StatusBadge from "@/common/components/StatusBadge";
@@ -22,3 +23,21 @@ export default function TripTable({ rows }) {
   ];
   return <Table columns={columns} rows={rows} onRowClick={(r) => nav(`/trips/${r.id}`)} />;
 }
+=======
+
+import Table from '../../../common/components/Table';
+import StatusBadge from '../../../common/components/StatusBadge';
+
+export default function TripTable({ trips, onTripClick }) {
+  const columns = [
+    { key: 'trip_code', label: 'Trip Code' },
+    { key: 'source', label: 'Source' },
+    { key: 'destination', label: 'Destination' },
+    { key: 'vehicle_name', label: 'Vehicle' },
+    { key: 'driver_name', label: 'Driver' },
+    { key: 'status', label: 'Status' },
+  ];
+  return <Table columns={columns} data={trips} onRowClick={onTripClick} />;
+}
+
+>>>>>>> e21946685e62ae18c3f3933d86dd20bdbac55cd8

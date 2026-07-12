@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """fuel_logs.py — HTTP handlers. Delegates to service layer."""
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -33,3 +34,32 @@ async def create_fuel_log(fuel_in: FuelLogCreate, db: AsyncSession = Depends(get
     await db.refresh(db_fuel)
     return db_fuel
 
+=======
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+
+from app.api.v1.deps import require_perm
+from app.db.session import get_db
+from app.schemas.fuel_expense import FuelLogCreate, FuelLogOut
+from app.services import fuel_expense_service
+
+router = APIRouter(prefix="/fuel-logs", tags=["fuel-logs"])
+
+
+@router.get("", response_model=list[FuelLogOut])
+def list_fuel_logs(
+    vehicle_id: int | None = None,
+    db: Session = Depends(get_db),
+    user=Depends(require_perm("fuel_expense", "read")),
+):
+    return fuel_expense_service.list_fuel_logs(db, vehicle_id)
+
+
+@router.post("", response_model=FuelLogOut)
+def create_fuel_log(
+    data: FuelLogCreate,
+    db: Session = Depends(get_db),
+    user=Depends(require_perm("fuel_expense", "create")),
+):
+    return fuel_expense_service.create_fuel_log(db, data, user.user_id)
+>>>>>>> e21946685e62ae18c3f3933d86dd20bdbac55cd8

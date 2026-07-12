@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 fastapi==0.115.0
 uvicorn[standard]==0.32.0
 sqlalchemy==2.0.36
@@ -15,3 +16,19 @@ python-dotenv==1.0.1
 pytest==8.3.3
 pytest-asyncio==0.24.0
 httpx==0.27.2
+=======
+
+fastapi
+uvicorn[standard]
+sqlalchemy
+pymysql
+cryptography
+bcrypt
+python-jose[cryptography]
+pydantic
+pydantic-settings
+python-multipart
+pandas
+email-validator
+reportlab
+>>>>>>> e21946685e62ae18c3f3933d86dd20bdbac55cd8

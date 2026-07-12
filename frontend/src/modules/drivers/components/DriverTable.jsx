@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React from "react";
 import Table from "@/common/components/Table";
 import StatusBadge from "@/common/components/StatusBadge";
@@ -20,3 +21,20 @@ export default function DriverTable({ rows }) {
   ];
   return <Table columns={columns} rows={rows} onRowClick={(r) => nav(`/drivers/${r.id}`)} />;
 }
+=======
+
+import Table from '../../../common/components/Table';
+import StatusBadge from '../../../common/components/StatusBadge';
+
+export default function DriverTable({ drivers, onDriverClick }) {
+  const columns = [
+    { key: 'full_name', label: 'Name' },
+    { key: 'license_number', label: 'License No.' },
+    { key: 'license_category', label: 'Category' },
+    { key: 'contact_number', label: 'Contact' },
+    { key: 'status', label: 'Status' },
+  ];
+  return <Table columns={columns} data={drivers} onRowClick={onDriverClick} />;
+}
+
+>>>>>>> e21946685e62ae18c3f3933d86dd20bdbac55cd8

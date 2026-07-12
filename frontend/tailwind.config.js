@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /** TransitOps enterprise palette — mirrors src/config/theme.js. */
 export default {
   content: ["./index.html", "./src/**/*.{js,jsx}"],
@@ -24,3 +25,17 @@ export default {
   },
   plugins: [],
 };
+=======
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  darkMode: 'class',
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+>>>>>>> e21946685e62ae18c3f3933d86dd20bdbac55cd8

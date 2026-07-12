@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 export function formatDate(input, opts = { day: "2-digit", month: "short", year: "numeric" }) {
   if (!input) return "—";
   const d = input instanceof Date ? input : new Date(input);
@@ -14,4 +15,14 @@ export function formatDateTime(input) {
 export function daysUntil(dateInput) {
   const d = new Date(dateInput);
   return Math.floor((d - new Date()) / (1000 * 60 * 60 * 24));
+=======
+export function formatDate(dateStr) {
+  if (!dateStr) return '—';
+  return new Date(dateStr).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
+export function formatDateTime(dateStr) {
+  if (!dateStr) return '—';
+  return new Date(dateStr).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+>>>>>>> e21946685e62ae18c3f3933d86dd20bdbac55cd8
 }

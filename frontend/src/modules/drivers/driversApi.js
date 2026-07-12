@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import axiosClient from '../../api/axiosClient';
 
 export async function listDrivers({ q, status, page = 1, size = 20 } = {}) {
@@ -39,3 +40,18 @@ export async function reinstateDriver(id) {
 export async function deleteDriver(id) {
   await axiosClient.delete(`/drivers/${id}`);
 }
+=======
+
+import axiosClient from '../../api/axiosClient';
+import { ENDPOINTS } from '../../api/endpoints';
+
+export const driversApi = {
+  list: (params) => axiosClient.get(ENDPOINTS.drivers, { params }).then((r) => r.data),
+  get: (id) => axiosClient.get(`${ENDPOINTS.drivers}/${id}`).then((r) => r.data),
+  create: (data) => axiosClient.post(ENDPOINTS.drivers, data).then((r) => r.data),
+  update: (id, data) => axiosClient.put(`${ENDPOINTS.drivers}/${id}`, data).then((r) => r.data),
+  delete: (id) => axiosClient.delete(`${ENDPOINTS.drivers}/${id}`),
+  history: (id) => axiosClient.get(`${ENDPOINTS.drivers}/${id}/status-history`).then((r) => r.data),
+};
+
+>>>>>>> e21946685e62ae18c3f3933d86dd20bdbac55cd8

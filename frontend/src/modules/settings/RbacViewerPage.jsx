@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React from "react";
 import { ROLE_PERMISSIONS } from "@/config/permissions";
 import { ROLE_LABELS } from "@/config/constants";
@@ -30,6 +31,15 @@ export default function RbacViewerPage() {
             ))}
           </tbody>
         </table>
+=======
+
+export default function RbacViewerPage() {
+  return (
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Role-Based Access Control</h1>
+      <div className="card p-6">
+        <p>RBAC viewer coming soon!</p>
+>>>>>>> e21946685e62ae18c3f3933d86dd20bdbac55cd8
       </div>
     </div>
   );

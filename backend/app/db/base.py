@@ -1,9 +1,13 @@
+<<<<<<< HEAD
 """Declarative Base + imports all models so Alembic can autogenerate."""
+=======
+>>>>>>> e21946685e62ae18c3f3933d86dd20bdbac55cd8
 from sqlalchemy.orm import DeclarativeBase
 
 
 class Base(DeclarativeBase):
     pass
+<<<<<<< HEAD
 
 
 # Import models so metadata is populated — commented out to avoid circular import
@@ -23,3 +27,5 @@ class Base(DeclarativeBase):
 # from app.models.fuel_log import FuelLog  # noqa
 # from app.models.expense import Expense  # noqa
 # from app.models.notification import Notification  # noqa
+=======
+>>>>>>> e21946685e62ae18c3f3933d86dd20bdbac55cd8
