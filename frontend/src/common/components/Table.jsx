@@ -1,7 +1,8 @@
 import StatusBadge from './StatusBadge';
+import EmptyState from './EmptyState';
 
-export default function Table({ columns, data, onRowClick }) {
-  if (!data?.length) return null;
+export default function Table({ columns, data, onRowClick, emptyMessage = "No data available" }) {
+  if (!data || data.length === 0) return <EmptyState message={emptyMessage} />;
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
@@ -21,7 +22,7 @@ export default function Table({ columns, data, onRowClick }) {
             >
               {columns.map((col) => (
                 <td key={col.key} className="py-3 px-4">
-                  {col.render ? col.render(row) : col.key === 'status' ? <StatusBadge status={row[col.key]} /> : row[col.key]}
+                  {col.render ? col.render(row[col.key], row) : col.key === 'status' ? <StatusBadge status={row[col.key]} /> : row[col.key]}
                 </td>
               ))}
             </tr>

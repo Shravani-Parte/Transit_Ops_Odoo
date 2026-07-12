@@ -11,3 +11,4 @@ pydantic-settings
 python-multipart
 pandas
 email-validator
+reportlab

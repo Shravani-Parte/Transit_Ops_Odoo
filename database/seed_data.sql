@@ -19,9 +19,17 @@ INSERT INTO permissions (module, action) VALUES
 ('settings', 'read'), ('settings', 'update'),
 ('notifications', 'read');
 
--- Fleet Manager: full access
+-- Fleet Manager: vehicle full, maintenance full, driver read, trip read, fuel_expense read, reports full, dashboard read
 INSERT INTO role_permissions (role_id, permission_id)
-SELECT 1, permission_id FROM permissions;
+SELECT 1, permission_id FROM permissions WHERE
+    (module = 'vehicle') OR
+    (module = 'maintenance') OR
+    (module = 'driver' AND action = 'read') OR
+    (module = 'trip' AND action = 'read') OR
+    (module = 'fuel_expense' AND action = 'read') OR
+    (module = 'reports') OR
+    (module = 'dashboard' AND action = 'read') OR
+    (module = 'notifications' AND action = 'read');
 
 -- Dispatcher: vehicle read, trip full, dashboard read
 INSERT INTO role_permissions (role_id, permission_id)

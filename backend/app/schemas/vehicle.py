@@ -1,7 +1,7 @@
-from datetime import datetime
+from datetime import datetime, date
 from decimal import Decimal
 from typing import Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class VehicleBase(BaseModel):
@@ -47,3 +47,29 @@ class VehicleStatusHistoryOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class VehicleDocumentBase(BaseModel):
+    document_type: str
+    file_url: str
+    expiry_date: Optional[date] = None
+
+
+class VehicleDocumentCreate(VehicleDocumentBase):
+    pass
+
+
+class VehicleDocumentOut(VehicleDocumentBase):
+    document_id: int
+    vehicle_id: int
+    uploaded_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
+class VehicleCostSummary(BaseModel):
+    total_fuel_cost: Decimal
+    total_maintenance_cost: Decimal
+    total_cost: Decimal
+

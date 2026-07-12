@@ -7,5 +7,18 @@ export const reportsApi = {
   getOperationalCost: () => axiosClient.get(ENDPOINTS.reports.operationalCost).then((r) => r.data),
   getVehicleRoi: () => axiosClient.get(ENDPOINTS.reports.roi).then((r) => r.data),
   getMonthlyRevenue: () => axiosClient.get(ENDPOINTS.reports.monthlyRevenue).then((r) => r.data),
-  exportCsv: (type) => axiosClient.get(ENDPOINTS.reports.export(type), { responseType: 'blob' }),
+  exportReport: (type, format) => 
+    axiosClient.get(ENDPOINTS.reports.export(type), { 
+      params: { format }, 
+      responseType: 'blob' 
+    }).then((r) => {
+      const url = window.URL.createObjectURL(new Blob([r.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `${type}.${format}`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    }),
 };

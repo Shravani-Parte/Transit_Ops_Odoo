@@ -1,5 +1,5 @@
 from decimal import Decimal
-
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.core.exceptions import NotFoundError, ValidationError
@@ -7,7 +7,10 @@ from app.models.region import Region
 from app.models.trip import Trip
 from app.models.vehicle import Vehicle
 from app.models.vehicle_status_history import VehicleStatusHistory
-from app.schemas.vehicle import VehicleCreate, VehicleUpdate
+from app.models.vehicle_document import VehicleDocument
+from app.models.fuel_log import FuelLog
+from app.models.maintenance_log import MaintenanceLog
+from app.schemas.vehicle import VehicleCreate, VehicleUpdate, VehicleDocumentCreate
 
 
 def vehicle_to_dict(db: Session, vehicle: Vehicle) -> dict:
@@ -93,6 +96,27 @@ def delete_vehicle(db: Session, vehicle_id: int) -> None:
     db.commit()
 
 
+def retire_vehicle(db: Session, vehicle_id: int, user_id: int) -> dict:
+    vehicle = db.query(Vehicle).filter(Vehicle.vehicle_id == vehicle_id, Vehicle.is_deleted == False).first()
+    if not vehicle:
+        raise NotFoundError("Vehicle not found")
+    active_trip = db.query(Trip).filter(Trip.vehicle_id == vehicle_id, Trip.status == "Dispatched").first()
+    if active_trip:
+        raise ValidationError("Cannot retire vehicle on active trip")
+    old_status = vehicle.status
+    vehicle.status = "Retired"
+    db.add(VehicleStatusHistory(
+        vehicle_id=vehicle.vehicle_id,
+        old_status=old_status,
+        new_status="Retired",
+        changed_by=user_id,
+        reason="Vehicle retired"
+    ))
+    db.commit()
+    db.refresh(vehicle)
+    return vehicle_to_dict(db, vehicle)
+
+
 def get_status_history(db: Session, vehicle_id: int) -> list:
     return (
         db.query(VehicleStatusHistory)
@@ -100,3 +124,58 @@ def get_status_history(db: Session, vehicle_id: int) -> list:
         .order_by(VehicleStatusHistory.changed_at.desc())
         .all()
     )
+
+
+def list_documents(db: Session, vehicle_id: int) -> list[VehicleDocument]:
+    return (
+        db.query(VehicleDocument)
+        .filter(VehicleDocument.vehicle_id == vehicle_id)
+        .order_by(VehicleDocument.uploaded_at.desc())
+        .all()
+    )
+
+
+def create_document(db: Session, vehicle_id: int, data: VehicleDocumentCreate, user_id: int) -> VehicleDocument:
+    # Verify vehicle exists
+    get_vehicle(db, vehicle_id)
+    doc = VehicleDocument(
+        vehicle_id=vehicle_id,
+        document_type=data.document_type,
+        file_url=data.file_url,
+        expiry_date=data.expiry_date,
+        uploaded_by=user_id
+    )
+    db.add(doc)
+    db.commit()
+    db.refresh(doc)
+    return doc
+
+
+def delete_document(db: Session, vehicle_id: int, document_id: int) -> None:
+    doc = db.query(VehicleDocument).filter(
+        VehicleDocument.document_id == document_id,
+        VehicleDocument.vehicle_id == vehicle_id
+    ).first()
+    if not doc:
+        raise NotFoundError("Document not found")
+    db.delete(doc)
+    db.commit()
+
+
+def get_cost_summary(db: Session, vehicle_id: int) -> dict:
+    # Verify vehicle exists
+    get_vehicle(db, vehicle_id)
+    
+    total_fuel = db.query(func.coalesce(func.sum(FuelLog.cost), 0)).filter(
+        FuelLog.vehicle_id == vehicle_id
+    ).scalar()
+    
+    total_maintenance = db.query(func.coalesce(func.sum(MaintenanceLog.cost), 0)).filter(
+        MaintenanceLog.vehicle_id == vehicle_id
+    ).scalar()
+    
+    return {
+        "total_fuel_cost": total_fuel,
+        "total_maintenance_cost": total_maintenance,
+        "total_cost": total_fuel + total_maintenance
+    }

@@ -5,16 +5,23 @@ import Button from '../../common/components/Button';
 import LoadingSpinner from '../../common/components/LoadingSpinner';
 import TripTable from './components/TripTable';
 import { useTrips } from './hooks/useTrips';
+import { useAuth } from '../../auth/useAuth';
+import { canCreate } from '../../config/permissions';
 
 export default function TripListPage() {
   const navigate = useNavigate();
   const { trips, loading } = useTrips();
+  const { user } = useAuth();
+  console.log('current user:', user);
+  console.log('canCreate trip:', canCreate(user, 'trip'));
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Trips</h1>
-        <Button onClick={() => navigate('/trips/new')}><Plus size={18} />Create Trip</Button>
+        {canCreate(user, 'trip') && (
+          <Button onClick={() => navigate('/trips/new')}><Plus size={18} />Create Trip</Button>
+        )}
       </div>
       {loading ? (
         <LoadingSpinner />
