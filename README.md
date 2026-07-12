@@ -1,4 +1,4 @@
-# TransitOps — Reconciled Repo Structure (Final)
+# TransitOps — Reconciled Repo Structure
 **Stack:** React + Vite, JSX only (no TypeScript) · FastAPI (backend) · MySQL (database) · Docker Compose (orchestration)
 
 This supersedes the earlier `TransitOps_Project_Structure.md`. It keeps everything that was already correct in that file and resolves the 7 flagged differences against the mock and the planning docs. Resolution notes are called out inline with `⚑ RESOLVED:` and summarized in the table at the bottom.
