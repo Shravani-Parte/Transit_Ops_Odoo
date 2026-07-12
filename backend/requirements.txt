@@ -1,0 +1,10 @@
+# NOTE: db/session.py uses an async SQLAlchemy engine.
+# Use an async MySQL driver — asyncmy or aiomysql — NOT plain PyMySQL.
+fastapi
+uvicorn[standard]
+sqlalchemy
+asyncmy
+alembic
+pydantic
+python-jose[cryptography]
+passlib[bcrypt]
