@@ -1,0 +1,48 @@
+# TransitOps — multi-service orchestration
+# Boots MySQL + FastAPI backend + React frontend for local development.
+version: "3.9"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: transitops-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpass}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-transitops}
+      MYSQL_USER: ${MYSQL_USER:-transitops}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-transitops}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - ./database/seed_data.sql:/docker-entrypoint-initdb.d/02_seed.sql:ro
+      - ./database/triggers_views.sql:/docker-entrypoint-initdb.d/03_triggers.sql:ro
+
+  backend:
+    build: ./backend
+    container_name: transitops-backend
+    restart: unless-stopped
+    depends_on:
+      - mysql
+    environment:
+      DATABASE_URL: mysql+aiomysql://${MYSQL_USER:-transitops}:${MYSQL_PASSWORD:-transitops}@mysql:3306/${MYSQL_DATABASE:-transitops}
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+
+  frontend:
+    image: node:20-alpine
+    container_name: transitops-frontend
+    working_dir: /app
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+
+volumes:
+  mysql_data:
