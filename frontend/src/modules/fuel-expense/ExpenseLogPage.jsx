@@ -6,9 +6,12 @@ import LoadingSpinner from '../../common/components/LoadingSpinner';
 import StatusBadge from '../../common/components/StatusBadge';
 import Table from '../../common/components/Table';
 import { useExpenses } from './hooks/useFuelExpense';
+import { useAuth } from '../../auth/useAuth';
+import { canCreate } from '../../config/permissions';
 
 export default function ExpenseLogPage() {
   const { expenses, loading } = useExpenses();
+  const { user } = useAuth();
 
   const columns = [
     { key: 'vehicle_name', label: 'Vehicle' },
@@ -24,7 +27,9 @@ export default function ExpenseLogPage() {
         <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Expense Logs</h1>
         <div className="flex gap-2">
           <Link to="/fuel-expenses"><Button variant="secondary">Fuel Logs</Button></Link>
-          <Button><Plus size={18} />Add Expense</Button>
+          {canCreate(user, 'fuel_expense') && (
+            <Button><Plus size={18} />Add Expense</Button>
+          )}
         </div>
       </div>
       {loading ? (

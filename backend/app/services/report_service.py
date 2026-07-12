@@ -61,9 +61,6 @@ def get_operational_costs(db: Session) -> list[dict]:
     vehicles = db.query(Vehicle).filter(Vehicle.is_deleted == False).all()
     result = []
     for v in vehicles:
-        fuel_cost = db.query(FuelLog).filter(FuelLog.vehicle_id == v.vehicle_id).with_entities(
-            db.query(FuelLog.cost).filter(FuelLog.vehicle_id == v.vehicle_id).statement
-        )
         total_fuel = sum(float(f.cost) for f in db.query(FuelLog).filter(FuelLog.vehicle_id == v.vehicle_id).all())
         total_maint = sum(float(m.cost) for m in db.query(MaintenanceLog).filter(MaintenanceLog.vehicle_id == v.vehicle_id).all())
         result.append({
@@ -122,4 +119,69 @@ def export_csv(db: Session, report_type: str) -> str:
     df = pd.DataFrame(data)
     buffer = io.StringIO()
     df.to_csv(buffer, index=False)
+    return buffer.getvalue()
+
+
+def export_pdf(db: Session, report_type: str) -> bytes:
+    from reportlab.lib import colors
+    from reportlab.lib.pagesizes import letter
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
+    from reportlab.lib.styles import getSampleStyleSheet
+    import io
+
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
+    elements = []
+    styles = getSampleStyleSheet()
+
+    # Get data
+    if report_type == "roi":
+        title = "Vehicle ROI Report"
+        data = get_vehicle_roi(db)
+        if data:
+            headers = list(data[0].keys())
+            table_data = [headers]
+            for row in data:
+                table_data.append([str(v) for v in row.values()])
+    elif report_type == "fuel-efficiency":
+        title = "Fuel Efficiency Report"
+        data = get_fuel_efficiency(db)
+        if data:
+            headers = list(data[0].keys())
+            table_data = [headers]
+            for row in data:
+                table_data.append([str(v) for v in row.values()])
+    elif report_type == "operational-cost":
+        title = "Operational Cost Report"
+        data = get_operational_costs(db)
+        if data:
+            headers = list(data[0].keys())
+            table_data = [headers]
+            for row in data:
+                table_data.append([str(v) for v in row.values()])
+    else:
+        title = "Dashboard KPIs"
+        kpis = get_dashboard_kpis(db)
+        table_data = [["Metric", "Value"]]
+        for key, value in kpis.model_dump().items():
+            table_data.append([key.replace("_", " ").title(), str(value)])
+
+    # Add title
+    elements.append(Paragraph(title, styles["Title"]))
+
+    if table_data:
+        table = Table(table_data)
+        table.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
+            ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
+            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+            ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+            ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
+            ("BACKGROUND", (0, 1), (-1, -1), colors.beige),
+            ("GRID", (0, 0), (-1, -1), 1, colors.black),
+        ]))
+        elements.append(table)
+
+    doc.build(elements)
+    buffer.seek(0)
     return buffer.getvalue()

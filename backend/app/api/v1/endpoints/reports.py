@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Depends
-from fastapi.responses import PlainTextResponse
+from fastapi import APIRouter, Depends, Query
+from fastapi.responses import PlainTextResponse, StreamingResponse
 from sqlalchemy.orm import Session
+import io
 
 from app.api.v1.deps import require_perm
 from app.db.session import get_db
@@ -66,6 +67,23 @@ def monthly_revenue(db: Session = Depends(get_db), user=Depends(require_perm("re
 
 
 @router_reports.get("/export/{report_type}")
-def export_csv(report_type: str, db: Session = Depends(get_db), user=Depends(require_perm("reports", "export"))):
-    csv_data = report_service.export_csv(db, report_type)
-    return PlainTextResponse(csv_data, media_type="text/csv")
+def export_report(
+    report_type: str,
+    format: str = Query("csv", description="Export format (csv or pdf)"),
+    db: Session = Depends(get_db),
+    user=Depends(require_perm("reports", "export")),
+):
+    if format == "pdf":
+        pdf_data = report_service.export_pdf(db, report_type)
+        return StreamingResponse(
+            io.BytesIO(pdf_data),
+            media_type="application/pdf",
+            headers={"Content-Disposition": f"attachment; filename={report_type}.pdf"},
+        )
+    else:
+        csv_data = report_service.export_csv(db, report_type)
+        return PlainTextResponse(
+            csv_data,
+            media_type="text/csv",
+            headers={"Content-Disposition": f"attachment; filename={report_type}.csv"},
+        )

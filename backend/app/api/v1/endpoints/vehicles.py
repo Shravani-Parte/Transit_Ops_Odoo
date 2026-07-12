@@ -3,7 +3,15 @@ from sqlalchemy.orm import Session
 
 from app.api.v1.deps import require_perm
 from app.db.session import get_db
-from app.schemas.vehicle import VehicleCreate, VehicleOut, VehicleStatusHistoryOut, VehicleUpdate
+from app.schemas.vehicle import (
+    VehicleCreate,
+    VehicleOut,
+    VehicleStatusHistoryOut,
+    VehicleUpdate,
+    VehicleDocumentCreate,
+    VehicleDocumentOut,
+    VehicleCostSummary
+)
 from app.services import vehicle_service
 
 router = APIRouter(prefix="/vehicles", tags=["vehicles"])
@@ -45,6 +53,42 @@ def delete_vehicle(vehicle_id: int, db: Session = Depends(get_db), user=Depends(
     return {"message": "Vehicle deleted"}
 
 
+@router.post("/{vehicle_id}/retire", response_model=VehicleOut)
+def retire_vehicle(vehicle_id: int, db: Session = Depends(get_db), user=Depends(require_perm("vehicle", "update"))):
+    return vehicle_service.retire_vehicle(db, vehicle_id, user.user_id)
+
+
 @router.get("/{vehicle_id}/status-history", response_model=list[VehicleStatusHistoryOut])
 def status_history(vehicle_id: int, db: Session = Depends(get_db), user=Depends(require_perm("vehicle", "read"))):
     return vehicle_service.get_status_history(db, vehicle_id)
+
+
+@router.get("/{vehicle_id}/documents", response_model=list[VehicleDocumentOut])
+def list_documents(vehicle_id: int, db: Session = Depends(get_db), user=Depends(require_perm("vehicle", "read"))):
+    return vehicle_service.list_documents(db, vehicle_id)
+
+
+@router.post("/{vehicle_id}/documents", response_model=VehicleDocumentOut)
+def create_document(
+    vehicle_id: int,
+    data: VehicleDocumentCreate,
+    db: Session = Depends(get_db),
+    user=Depends(require_perm("vehicle", "update"))
+):
+    return vehicle_service.create_document(db, vehicle_id, data, user.user_id)
+
+
+@router.delete("/{vehicle_id}/documents/{document_id}")
+def delete_document(
+    vehicle_id: int,
+    document_id: int,
+    db: Session = Depends(get_db),
+    user=Depends(require_perm("vehicle", "update"))
+):
+    vehicle_service.delete_document(db, vehicle_id, document_id)
+    return {"message": "Document deleted"}
+
+
+@router.get("/{vehicle_id}/cost-summary", response_model=VehicleCostSummary)
+def get_cost_summary(vehicle_id: int, db: Session = Depends(get_db), user=Depends(require_perm("vehicle", "read"))):
+    return vehicle_service.get_cost_summary(db, vehicle_id)
