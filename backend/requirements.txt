@@ -1,10 +1,13 @@
-# NOTE: db/session.py uses an async SQLAlchemy engine.
-# Use an async MySQL driver — asyncmy or aiomysql — NOT plain PyMySQL.
+
 fastapi
 uvicorn[standard]
 sqlalchemy
-asyncmy
-alembic
-pydantic
+pymysql
+cryptography
+bcrypt
 python-jose[cryptography]
-passlib[bcrypt]
+pydantic
+pydantic-settings
+python-multipart
+pandas
+email-validator
